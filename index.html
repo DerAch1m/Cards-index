@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Cards</title>
+    <link rel="stylesheet" href="style.css?v=9">
+    <!-- SVG Icons are inline or we can use a library, but for valid HTML without build, inline SVGs or a CDN script is best. 
+         Using unpkg for lucide for simplicity if allowed, otherwise simple SVGs. 
+         I will use inline SVGs in JS or simple placeholder text for buttons first to ensure it works offline/locally without internet if needed.
+         Actually, let's use a CDN for Lucide icons for better visuals since the user has internet access. -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/svg+xml" href="icon.svg">
+    <link rel="apple-touch-icon" href="icon.svg">
+    <meta name="theme-color" content="#FF9800">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+</head>
+
+<body>
+    <div id="app">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="tabs-container" id="tabs-list">
+                <!-- Tabs will be injected here -->
+            </div>
+            <button id="add-tab-btn" class="icon-btn" aria-label="Add Tab">
+                <i data-lucide="plus"></i>
+            </button>
+        </header>
+
+        <!-- Main Content (Views) -->
+        <main id="main-content">
+            <!-- Views will be toggled here -->
+
+            <!-- VIEW: FLASHCARD (Home) -->
+            <div id="view-flashcard" class="view active">
+                <div class="flashcard-workspace">
+                    <div class="center-stage">
+                        <div class="card-container">
+                            <div id="current-card" class="index-card">
+                                <div class="card-content front">
+                                    <p id="card-front-text">Press + to add a card</p>
+                                </div>
+                                <div class="card-content back hidden">
+                                    <p id="card-back-text">...</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="controls-area">
+                            <!-- Study Controls (Revealed after flip) -->
+                            <div id="study-controls" class="hidden">
+                                <button id="btn-correct" class="btn-circle btn-green" aria-label="Correct"><i
+                                        data-lucide="check"></i></button>
+                                <button id="btn-incorrect" class="btn-circle btn-red" aria-label="Incorrect"><i
+                                        data-lucide="x"></i></button>
+                                <button id="btn-archive-quick" class="btn-circle btn-gray" aria-label="Archive"><i
+                                        data-lucide="archive"></i></button>
+                                <button id="btn-delete-quick" class="btn-circle btn-red-outline" aria-label="Delete"><i
+                                        data-lucide="trash-2"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="right-sidebar">
+                        <button id="nav-add" class="btn-action primary">Add New</button>
+                        <button id="nav-manage" class="btn-action">Manage</button>
+                        <button id="nav-archive" class="btn-action">Archive</button>
+                        <hr style="width: 100%; border: 1px solid var(--border-color); margin: 0.5rem 0;">
+                        <button id="nav-export" class="btn-action">Backup</button>
+                        <button id="nav-import" class="btn-action">Restore</button>
+                        <input type="file" id="file-import" accept=".json" style="display: none;">
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW: ADD CARD -->
+            <div id="view-add" class="view hidden">
+                <div class="split-screen">
+                    <div class="half top-half">
+                        <label>Front</label>
+                        <textarea id="input-front" placeholder="Term / Question"></textarea>
+                    </div>
+                    <div class="half bottom-half">
+                        <label>Back</label>
+                        <textarea id="input-back" placeholder="Definition / Answer"></textarea>
+                    </div>
+                </div>
+                <div class="floating-actions">
+                    <button id="btn-cancel-add" class="btn-text">Return</button>
+                    <button id="btn-save-card" class="btn-primary">Save</button>
+                </div>
+            </div>
+
+            <!-- VIEW: MANAGE / ARCHIVE LIST -->
+            <div id="view-list" class="view hidden">
+                <div class="list-header">
+                    <h2 id="list-title">Manage Cards</h2>
+                    <button id="btn-return-list" class="btn-text">Return</button>
+                </div>
+                <div id="cards-list" class="cards-list-container">
+                    <!-- List items injected here -->
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Modals / Dialogs -->
+    <dialog id="manage-tab-dialog">
+        <form method="dialog">
+            <h3>Manage Tab</h3>
+            <input type="text" id="manage-tab-input"
+                style="width: 100%; margin: 1rem 0; padding: 0.5rem; font-size: 1rem;">
+            <div class="dialog-actions"
+                style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem;">
+                <button type="button" id="delete-tab-btn"
+                    style="color: red; background: none; border: none; font-weight: bold; cursor: pointer;">Delete
+                    Tab</button>
+                <div style="display: flex; gap: 0.5rem;">
+                    <button value="cancel" style="background: none; border: none; cursor: pointer;">Cancel</button>
+                    <button id="save-tab-btn" value="confirm"
+                        style="background: var(--primary-color); color: white; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer;">Save</button>
+                </div>
+            </div>
+        </form>
+    </dialog>
+
+    <script src="app.js"></script>
+</body>
+
+</html>

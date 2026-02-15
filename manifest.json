@@ -1,0 +1,18 @@
+{
+    "name": "Index Card App",
+    "short_name": "IndexCards",
+    "start_url": "./index.html",
+    "display": "standalone",
+    "background_color": "#FFF8E1",
+    "theme_color": "#FF9800",
+    "orientation": "portrait",
+    "description": "A simple offline-capable flashcard app for spaced repetition learning.",
+    "icons": [
+        {
+            "src": "icon.svg",
+            "sizes": "192x192 512x512",
+            "type": "image/svg+xml",
+            "purpose": "any maskable"
+        }
+    ]
+}

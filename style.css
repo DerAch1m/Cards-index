@@ -36,6 +36,14 @@ body {
     overflow: hidden;
 }
 
+#app {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-height: 0;
+}
+
 /* Header & Tabs */
 .app-header {
     background-color: var(--bg-color);
@@ -106,6 +114,7 @@ body {
     flex-direction: column;
     width: 100%;
     height: 100%;
+    min-height: 0;
     overflow-y: auto;
     /* Allow scrolling within view if needed */
 }
@@ -367,8 +376,10 @@ textarea {
 
 .cards-list-container {
     flex: 1;
+    min-height: 0;
     overflow-y: auto;
     padding: 1rem;
+    -webkit-overflow-scrolling: touch;
 }
 
 .list-item {

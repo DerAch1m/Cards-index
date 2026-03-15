@@ -69,10 +69,11 @@
                         <button id="nav-add" class="btn-action primary">Add New</button>
                         <button id="nav-manage" class="btn-action">Manage</button>
                         <button id="nav-archive" class="btn-action">Archive</button>
-                        <hr style="width: 100%; border: 1px solid var(--border-color); margin: 0.5rem 0;">
                         <button id="nav-export" class="btn-action">Backup</button>
                         <button id="nav-import" class="btn-action">Restore</button>
+                        <button id="nav-import-csv" class="btn-action">CSV importieren</button>
                         <input type="file" id="file-import" accept=".json" style="display: none;">
+                        <input type="file" id="file-import-csv" accept=".csv" style="display: none;">
                     </div>
                 </div>
             </div>
@@ -100,6 +101,10 @@
                 <div class="list-header">
                     <h2 id="list-title">Manage Cards</h2>
                     <button id="btn-return-list" class="btn-text">Return</button>
+                </div>
+                <div class="list-search" style="padding: 0 1rem 1rem 1rem; display: flex; gap: 0.5rem;">
+                    <input type="text" id="list-search-input" placeholder="Suchen..." style="flex: 1; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px; font-size: 1rem; box-sizing: border-box;">
+                    <button id="btn-list-search" class="btn-primary" style="padding: 0.5rem 1rem;">Search</button>
                 </div>
                 <div id="cards-list" class="cards-list-container">
                     <!-- List items injected here -->

@@ -68,6 +68,8 @@ const inputFront = document.getElementById('input-front');
 const inputBack = document.getElementById('input-back');
 
 const listTitle = document.getElementById('list-title');
+const listSearchInput = document.getElementById('list-search-input');
+const btnListSearch = document.getElementById('btn-list-search');
 const cardsListContainer = document.getElementById('cards-list');
 const btnReturnList = document.getElementById('btn-return-list');
 
@@ -99,15 +101,28 @@ function init() {
         if (btnSaveCard) btnSaveCard.addEventListener('click', handleSaveCard);
 
         if (btnReturnList) btnReturnList.addEventListener('click', () => switchView('flashcard'));
+        
+        if (btnListSearch && listSearchInput) {
+            const performSearch = () => renderList();
+            btnListSearch.addEventListener('click', performSearch);
+            listSearchInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') performSearch();
+            });
+        }
 
-        // Export / Import
         const btnExport = document.getElementById('nav-export');
         const btnImport = document.getElementById('nav-import');
         const fileInput = document.getElementById('file-import');
 
+        const btnImportCsv = document.getElementById('nav-import-csv');
+        const fileInputCsv = document.getElementById('file-import-csv');
+
         if (btnExport) btnExport.addEventListener('click', handleExport);
         if (btnImport) btnImport.addEventListener('click', handleImport);
         if (fileInput) fileInput.addEventListener('change', handleFileImport);
+        
+        if (btnImportCsv) btnImportCsv.addEventListener('click', handleImportCsv);
+        if (fileInputCsv) fileInputCsv.addEventListener('change', handleFileImportCsv);
 
         if (currentCardEl) currentCardEl.addEventListener('click', handleCardTap);
 
@@ -362,6 +377,7 @@ function handleSaveCard() {
 
 function openList(mode) {
     currentListMode = mode;
+    if (listSearchInput) listSearchInput.value = '';
     switchView('list');
     renderList();
 }
@@ -378,6 +394,14 @@ function renderList() {
     } else {
         listTitle.textContent = "Archive";
         displayCards = allCards.filter(c => c.isArchived);
+    }
+
+    const searchQuery = listSearchInput ? listSearchInput.value.trim().toLowerCase() : '';
+    if (searchQuery) {
+        displayCards = displayCards.filter(c => 
+            c.front.toLowerCase().includes(searchQuery) || 
+            c.back.toLowerCase().includes(searchQuery)
+        );
     }
 
     if (displayCards.length === 0) {
@@ -526,6 +550,75 @@ function handleFileImport(event) {
             console.error(err);
             alert("Failed to import: " + err.message);
         }
+        // Reset input so same file can be selected again if needed
+        event.target.value = '';
+    };
+    reader.readAsText(file);
+}
+
+function handleImportCsv() {
+    document.getElementById('file-import-csv').click();
+}
+
+function handleFileImportCsv(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        try {
+            const csvText = e.target.result;
+            const lines = csvText.split(/\r?\n/);
+            let importedCount = 0;
+            let skippedCount = 0;
+
+            lines.forEach(line => {
+                if (!line.trim()) return; // Skip empty lines
+
+                // Assuming simple CSV: Front,Back
+                // Does not handle commas inside quotes for now, keep it simple
+                const parts = line.split(',');
+                if (parts.length >= 2) {
+                    const front = parts[0].trim();
+                    const back = parts.slice(1).join(',').trim(); // Join rest in case of extra commas
+                    
+                    if (front && back) {
+                        const newCard = {
+                            id: 'card-' + Date.now() + Math.random().toString(36).substr(2, 5),
+                            tabId: state.activeTabId,
+                            front,
+                            back,
+                            weight: 3, 
+                            isArchived: false,
+                            createdAt: Date.now()
+                        };
+                        state.cards.push(newCard);
+                        importedCount++;
+                    } else {
+                        console.warn('Skipped corrupt line (missing front or back content):', line);
+                        skippedCount++;
+                    }
+                } else {
+                    console.warn('Skipped corrupt line (missing comma separator):', line);
+                    skippedCount++;
+                }
+            });
+
+            if (importedCount > 0) {
+                saveState();
+                refreshCard(); // Update view
+                alert(`Erfolgreich ${importedCount} Karten importiert.` + (skippedCount > 0 ? ` ${skippedCount} fehlerhafte Zeilen übersprungen.` : ''));
+            } else if (skippedCount > 0) {
+                alert(`Fehler beim Import: Alle ${skippedCount} Zeilen waren fehlerhaft oder leer.`);
+            } else {
+                 alert("Die ausgewählte Datei war leer.");
+            }
+
+        } catch (err) {
+            console.error(err);
+            alert("Failed to import CSV: " + err.message);
+        }
+        
         // Reset input so same file can be selected again if needed
         event.target.value = '';
     };
